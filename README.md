@@ -10,6 +10,7 @@ After installing, run:
 ```sh
 deno run --allow-net --allow-read index.ts
 ```
+
 ## Code
 Our `index.ts` file is our backend and main entry point. It works to serve the main files, but also allow us to `/keys` for a json heatmap and `/emit` to post some new data! There is no "cheat" detection right now, although in the future, limiting the input to 35 keys per second seems reasonable.
 
@@ -22,3 +23,5 @@ CI/CD is done from deno.deploy so there is no configuration file needed. However
 docker build -t app . && docker run -it -p 8000:8000 app
 ```
 using the provided docker file and then navigate to http://localhost:8000
+
+I would put proof of logs here, but deno deploy does not generate logs. This link will have to suffice: https://i.imgur.com/wr2Ifvg.png
