@@ -50,7 +50,12 @@ const playSound = (clickIn = true) => {
     sound.play();
 };
 
+// cleared heatmap every 5 seconds, only local
 const keysClicks = new Map();
+// main heatmap that gets updated locally and through pulls
+let heatMap = new Map();
+
+const incMap = (map, key) => map.set(key, (map.get(key) || 0) + 1);
 
 document.addEventListener('keydown', e => {
     if (e.repeat) return;
@@ -58,7 +63,10 @@ document.addEventListener('keydown', e => {
     const keyEl = keyMap.get(key);
     if (!keyEl) return;
 
-    keysClicks.set(key, (keysClicks.get(key) || 0) + 1)
+    incMap(keysClicks, key);
+    incMap(heatMap, key);
+    updateHeatMaps(heatMap);
+
     keyEl.classList.add('pressed');
     playSound(true);
 });
@@ -81,13 +89,17 @@ setInterval(async () => {
 
     // get resulting heatmap which contains ours + all previous
     const json = await res.json();
-    updateHeatMaps(new Map(json));
+    heatMap = new Map(json);
+    updateHeatMaps(heatMap);
 }, 5000);
 
 fetch('/keys')
     .then(res => res.json())
     .then(json => new Map(json))
-    .then(updateHeatMaps);
+    .then(hm => {
+        heatMap = hm;
+        updateHeatMaps(hm);
+    });
 
 function updateHeatMaps(heatMap) {
     for (const keyEl of keyEls) {
