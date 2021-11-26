@@ -28,16 +28,16 @@ const handler = async (req: Request): Promise<Response> => {
     // file serving for all other URLs
     try {
         if (route === '/' || route === '/index.html') {
-            const filePathUrl = new URL('./static/index.html', import.meta.url).toString();
-            const resp = await fetch(filePathUrl.toString());
-            return new Response(resp.body, {
+            const file = await Deno.readTextFile(`${Deno.cwd()}/static/index.html`);
+            return new Response(file, {
                 headers: { "content-type": "text/html; charset=utf-8" },
             });
         }
 
-        const filePathUrl = new URL(`./static${route}`, import.meta.url).toString();
-        const resp = await fetch(filePathUrl.toString());
-        return new Response(resp.body, {
+        const file = await Deno.readFile(`${Deno.cwd()}/static${route}`);
+        // const filePathUrl = new URL(`./static${route}`, import.meta.url).toString();
+        // const resp = await fetch(filePathUrl.toString());
+        return new Response(file, {
             headers: { 'content-type': getFileType(route) }
         });
     } catch(e) {
